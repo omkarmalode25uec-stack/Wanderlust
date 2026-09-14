@@ -2,32 +2,46 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
+const passport = require("passport");
 const methodoverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
 
-const wrapAsync = require("./utils/wrapasync.js");
-const Listing = require("./models/listing.js");
+const listingRouter = require("./routes/listing.js");
+const reviewRouter = require("./routes/review.js");
+const localStrategy = require("passport-local");
 const ExpressError = require("./utils/ExpressError.js");
+const User = require("./models/user.js");
+const flash = require("connect-flash");
+const UserRouter = require("./routes/user.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/Wanderlust";
 
-// View engine
+
+// ================= VIEW ENGINE =================
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 
-// Middleware
-app.use(methodoverride("_method"));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "/public")));
 
-// Database connection
+// ================= MIDDLEWARE =================
+
+app.use(methodoverride("_method"));
+
+app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, "public")));
+
+
+// ================= DATABASE CONNECTION =================
+
 main()
     .then(() => {
         console.log("connected to db");
     })
     .catch((err) => {
-        console.log("Database connection error:", err);
+        console.log(err);
     });
 
 async function main() {
@@ -35,111 +49,126 @@ async function main() {
 }
 
 
-// ================= ROUTES =================
+// ================= SESSION =================
 
-// ROOT
+const sessionOptions = {
+    secret: "this is a secret",
+    resave: false,
+    saveUninitialized: true
+};
+
+app.use(session(sessionOptions));
+
+app.use(flash());
+
+
+// ================= PASSPORT =================
+
+app.use(passport.initialize());
+
+app.use(passport.session());
+
+passport.use(new localStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+
+passport.deserializeUser(User.deserializeUser());
+
+
+// ================= FLASH + CURRENT USER =================
+
+app.use((req, res, next) => {
+
+    res.locals.success = req.flash("success");
+
+    res.locals.error = req.flash("error");
+
+    // Make logged-in user available to all EJS files
+    res.locals.currentUser = req.user;
+    res.locals.currUser = req.user;
+
+    next();
+
+});
+
+
+// ================= ROOT =================
+
 app.get("/", (req, res) => {
+
     res.send("hi i am root");
+
 });
 
 
-// NEW ROUTE
-app.get("/listings/new", (req, res) => {
-    res.render("listings/new.ejs");
+// ================= DEMO USER =================
+
+app.get("/demouser", async (req, res) => {
+
+    try {
+
+        let fakeUser = new User({
+            email: "student@gmail.com",
+            username: "delta-student"
+        });
+
+        let registeredUser = await User.register(
+            fakeUser,
+            "student"
+        );
+
+        res.send(registeredUser);
+
+    } catch (err) {
+
+        res.send(err);
+
+    }
+
 });
 
 
-// INDEX ROUTE
-app.get("/listings", wrapAsync(async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
-}));
+// ================= USER ROUTER =================
+
+app.use("/", UserRouter);
 
 
-// CREATE ROUTE
-app.post("/listings", wrapAsync(async (req, res) => {
-    const newlisting = new Listing(req.body.listing);
-    if(!req.body.listing){
-        throw new ExpressError(400,"bad request!");
-    }
-    await newlisting.save();
+// ================= LISTING ROUTER =================
 
-    res.redirect("/listings");
-}));
+app.use("/listings", listingRouter);
 
 
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
+// ================= REVIEW ROUTER =================
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new ExpressError(404, "Page not found");
-    }
-
-    const listing = await Listing.findById(id);
-
-    if (!listing) {
-        throw new ExpressError(404, "Page not found");
-    }
-
-    res.render("listings/show.ejs", { listing });
-}));
-
-// EDIT ROUTE
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-
-    const listing = await Listing.findById(id);
-
-    if (!listing) {
-        throw new ExpressError(404, "Listing not found");
-    }
-
-    res.render("listings/edit.ejs", { listing });
-}));
+app.use("/listings", reviewRouter);
 
 
-// UPDATE ROUTE
-app.put("/listings/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
+// ================= 404 ERROR =================
 
-    await Listing.findByIdAndUpdate(
-        id,
-        { ...req.body.listing },
-        { runValidators: true }
-    );
-
-    res.redirect(`/listings/${id}`);
-}));
-
-
-// DELETE ROUTE
-app.delete("/listings/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-
-    await Listing.findByIdAndDelete(id);
-
-    res.redirect("/listings");
-}));
-
-
-
-// Express 5
 app.all("/{*splat}", (req, res, next) => {
+
     next(new ExpressError(404, "Page not found"));
+
 });
 
 
+// ================= ERROR HANDLER =================
 
 app.use((err, req, res, next) => {
 
-    let {
-        statusCode = 500,
-        message = "Something went wrong!"
-    } = err;
+    let { statusCode = 500 } = err;
 
-    res.status(statusCode).render("error.ejs", { err });
+    res.status(statusCode).render("error.ejs", {
+        err
+    });
+
 });
 
+
+// ================= SERVER =================
+
 app.listen(8080, () => {
+
     console.log("server working!!");
+
 });

@@ -1,48 +1,163 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="row">
-    <div class="col-8 offset-2">
+<div class="container mt-5">
 
-        <h1 class="listing-details-heading">Listing Details</h1>
+```
+<!-- ================= LISTING DETAILS ================= -->
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <h1 class="listing-details-heading mb-4">
+            <%= listing.title %>
+        </h1>
+
+        <% if (listing.owner) { %>
+            <i>
+                <%= listing.owner.username %>
+            </i>
+        <% } %>
 
         <div class="listing-details-card">
 
             <!-- Listing Image -->
-            <img
-                src="<%= listing.image.url %>"
+            <img src="<%= listing.image.url %>"
                 class="listing-details-image"
-                alt="listing image">
+                alt="<%= listing.title %>">
 
             <!-- Listing Information -->
             <div class="listing-info">
 
-                <h4><%= listing.title %></h4>
+                <h3>
+                    <%= listing.title %>
+                </h3>
 
-                <p><%= listing.description %></p>
+                <p class="listing-description">
+                    <%= listing.description %>
+                </p>
 
-                <p>₹<%= listing.price.toLocaleString("en-IN") %></p>
+                <div class="listing-meta">
 
-                <p><%= listing.location %></p>
+                    <p>
+                        💰
+                        <strong>
+                            ₹<%= listing.price.toLocaleString("en-IN") %>
+                        </strong>
+                        / night
+                    </p>
 
-                <p><%= listing.country %></p>
+                    <p>
+                        📍 <%= listing.location %>
+                    </p>
+
+                    <p>
+                        🌍 <%= listing.country %>
+                    </p>
+
+                </div>
 
             </div>
 
             <!-- Buttons -->
-            <div class="listing-actions">
+            <% if (currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
 
-                <a
-                    href="/listings/<%= listing._id %>/edit"
-                    class="btn btn-danger">
-                    Edit
-                </a>
+                <div class="listing-actions">
 
-                <form
-                    action="/listings/<%= listing._id %>?_method=DELETE"
-                    method="post">
+                    <a href="/listings/<%= listing._id %>/edit"
+                        class="btn btn-edit">
 
-                    <button class="btn btn-dark">
-                        Delete
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        Edit
+
+                    </a>
+
+                    <form action="/listings/<%= listing._id %>?_method=DELETE"
+                        method="post">
+
+                        <button class="btn btn-delete">
+
+                            <i class="fa-solid fa-trash"></i>
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ================= LEAVE A REVIEW ================= -->
+
+<% if (currUser) { %>
+
+    <div class="row justify-content-center mt-5 mb-5">
+
+        <div class="col-lg-8">
+
+            <div class="review-card">
+
+                <h3 class="review-heading">
+                    ⭐ Leave a Review
+                </h3>
+
+                <p class="text-muted">
+                    Reviewing as <strong><%= currUser.username %></strong>
+                </p>
+
+                <form action="/listings/<%= listing._id %>/reviews"
+                    method="post"
+                    class="needs-validation">
+
+                    <!-- Rating -->
+                    <div class="mb-4">
+
+                        <label for="rating" class="form-label">
+                            Your Rating
+                        </label>
+
+                        <input type="range"
+                            min="1"
+                            max="5"
+                            id="rating"
+                            name="review[rating]"
+                            class="form-range">
+
+                        <div class="rating-labels">
+
+                            <span>1 ⭐</span>
+                            <span>5 ⭐⭐⭐⭐⭐</span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="mb-4">
+
+                        <label for="comment" class="form-label">
+                            Write your experience
+                        </label>
+
+                        <textarea
+                            name="review[comment]"
+                            id="comment"
+                            rows="5"
+                            class="form-control"
+                            placeholder="Share your experience about this place..."
+                            required></textarea>
+
+                    </div>
+
+                    <!-- Submit -->
+                    <button class="btn submit-review-btn">
+                        Submit Review ⭐
                     </button>
 
                 </form>
@@ -52,4 +167,113 @@
         </div>
 
     </div>
+
+<% } else { %>
+
+    <!-- ================= LOGIN MESSAGE ================= -->
+
+    <div class="row justify-content-center mt-5 mb-5">
+
+        <div class="col-lg-8">
+
+            <div class="review-card text-center">
+
+                <h3 class="review-heading">
+                    ⭐ Want to leave a review?
+                </h3>
+
+                <p class="text-muted">
+                    You need to login before you can give a review.
+                </p>
+
+                <a href="/login" class="btn submit-review-btn">
+                    Login to Review
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+
+<!-- ================= REVIEWS ================= -->
+
+<div class="reviews-section mt-5 mb-5">
+
+    <hr class="my-5">
+
+    <h4 class="mb-4">
+        Guest Reviews
+    </h4>
+
+    <div class="row g-4 pb-5">
+
+        <% if (listing.reviews.length === 0) { %>
+
+            <!-- No Reviews -->
+
+            <div class="col-12">
+
+                <p class="text-muted">
+                    No reviews yet.
+                </p>
+
+            </div>
+
+        <% } else { %>
+
+            <!-- Display Reviews -->
+
+            <% for (let review of listing.reviews) { %>
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card review-item-card h-100 border-0">
+
+                        <div class="card-body">
+
+                            <!-- Username -->
+
+                            <h5 class="mb-2">
+                                👤 <%= review.author.username %>
+                            </h5>
+
+                            <!-- Rating -->
+
+                            <h6 class="mb-3">
+                                ⭐ <%= review.rating %> / 5
+                            </h6>
+
+                            <!-- Comment -->
+
+                            <p class="card-text">
+                                <%= review.comment %>
+                            </p>
+
+                            <!-- Date -->
+
+                            <small class="text-muted">
+
+                                <%= review.createdAt.toLocaleDateString("en-IN") %>
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+        <% } %>
+
+    </div>
+
+</div>
+```
+
 </div>
