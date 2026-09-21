@@ -170,7 +170,6 @@ app.use((err, req, res, next) => {
 });
 
 //  DATABASE + SERVER 
-
 async function startServer() {
 
     try {
@@ -181,8 +180,10 @@ async function startServer() {
 
         console.log("✅ Connected to MongoDB Atlas");
 
-        app.listen(8080, () => {
-            console.log("🚀 Server working on port 8080");
+        const PORT = process.env.PORT || 8080;
+
+        app.listen(PORT, () => {
+            console.log(`🚀 Server working on port ${PORT}`);
         });
 
     } catch (err) {
