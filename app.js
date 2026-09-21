@@ -158,6 +158,9 @@ app.use((req, res, next) => {
 // ERROR HANDLER 
 
 app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    }
 
     const {
         statusCode = 500,

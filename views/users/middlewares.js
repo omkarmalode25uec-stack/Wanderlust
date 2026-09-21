@@ -1,4 +1,4 @@
-const listing = require("../../models/listing");
+const Listing = require("../../models/listing");
 
 
 module.exports.isLoggedIn = (req, res, next) => {
