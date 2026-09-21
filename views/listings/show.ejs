@@ -1,265 +1,191 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="container mt-5">
+    <div class="container mt-5">
 
-```
-<!-- ================= LISTING DETAILS ================= -->
+        ```
+        <!-- ================= LISTING DETAILS ================= -->
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
 
-        <h1 class="listing-details-heading mb-4">
-            <%= listing.title %>
-        </h1>
-
-        <% if (listing.owner) { %>
-            <i>
-                <%= listing.owner.username %>
-            </i>
-        <% } %>
-
-        <div class="listing-details-card">
-
-            <!-- Listing Image -->
-            <img src="<%= listing.image.url %>"
-                class="listing-details-image"
-                alt="<%= listing.title %>">
-
-            <!-- Listing Information -->
-            <div class="listing-info">
-
-                <h3>
+                <h1 class="listing-details-heading mb-4">
                     <%= listing.title %>
-                </h3>
+                </h1>
 
-                <p class="listing-description">
-                    <%= listing.description %>
-                </p>
+                <% if (listing.owner) { %>
+                    <i>
+                        <%= listing.owner.username %>
+                    </i>
+                    <% } %>
 
-                <div class="listing-meta">
+                        <div class="listing-details-card">
 
-                    <p>
-                        💰
-                        <strong>
-                            ₹<%= listing.price.toLocaleString("en-IN") %>
-                        </strong>
-                        / night
-                    </p>
+                            <!-- Listing Image -->
+                            <img src="<%= listing.image.url %>" class="listing-details-image"
+                                alt="<%= listing.title %>">
 
-                    <p>
-                        📍 <%= listing.location %>
-                    </p>
+                            <!-- Listing Information -->
+                            <div class="listing-info">
 
-                    <p>
-                        🌍 <%= listing.country %>
-                    </p>
+                                <h3>
+                                    <%= listing.title %>
+                                </h3>
 
-                </div>
+                                <p class="listing-description">
+                                    <%= listing.description %>
+                                </p>
 
-            </div>
+                                <div class="listing-meta">
 
-            <!-- Buttons -->
-            <% if (currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
+                                    <p>
+                                        💰
+                                        <strong>
+                                            ₹<%= listing.price.toLocaleString("en-IN") %>
+                                        </strong>
+                                        / night
+                                    </p>
 
-                <div class="listing-actions">
+                                    <p>
+                                        📍 <%= listing.location %>
+                                    </p>
 
-                    <a href="/listings/<%= listing._id %>/edit"
-                        class="btn btn-edit">
+                                    <p>
+                                        🌍 <%= listing.country %>
+                                    </p>
 
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        Edit
+                                </div>
 
-                    </a>
+                            </div>
 
-                    <form action="/listings/<%= listing._id %>?_method=DELETE"
-                        method="post">
+                            <!-- Buttons -->
+                            <% if (currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
 
-                        <button class="btn btn-delete">
+                                <div class="listing-actions">
 
-                            <i class="fa-solid fa-trash"></i>
-                            Delete
+                                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-edit">
 
-                        </button>
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Edit
 
-                    </form>
+                                    </a>
 
-                </div>
+                                    <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
 
-            <% } %>
+                                        <button class="btn btn-delete">
 
-        </div>
+                                            <i class="fa-solid fa-trash"></i>
+                                            Delete
 
-    </div>
-</div>
+                                        </button>
 
+                                    </form>
 
-<!-- ================= LEAVE A REVIEW ================= -->
+                                </div>
 
-<% if (currUser) { %>
-
-    <div class="row justify-content-center mt-5 mb-5">
-
-        <div class="col-lg-8">
-
-            <div class="review-card">
-
-                <h3 class="review-heading">
-                    ⭐ Leave a Review
-                </h3>
-
-                <p class="text-muted">
-                    Reviewing as <strong><%= currUser.username %></strong>
-                </p>
-
-                <form action="/listings/<%= listing._id %>/reviews"
-                    method="post"
-                    class="needs-validation">
-
-                    <!-- Rating -->
-                    <div class="mb-4">
-
-                        <label for="rating" class="form-label">
-                            Your Rating
-                        </label>
-
-                        <input type="range"
-                            min="1"
-                            max="5"
-                            id="rating"
-                            name="review[rating]"
-                            class="form-range">
-
-                        <div class="rating-labels">
-
-                            <span>1 ⭐</span>
-                            <span>5 ⭐⭐⭐⭐⭐</span>
+                                <% } %>
 
                         </div>
 
-                    </div>
-
-                    <!-- Comment -->
-                    <div class="mb-4">
-
-                        <label for="comment" class="form-label">
-                            Write your experience
-                        </label>
-
-                        <textarea
-                            name="review[comment]"
-                            id="comment"
-                            rows="5"
-                            class="form-control"
-                            placeholder="Share your experience about this place..."
-                            required></textarea>
-
-                    </div>
-
-                    <!-- Submit -->
-                    <button class="btn submit-review-btn">
-                        Submit Review ⭐
-                    </button>
-
-                </form>
-
             </div>
-
         </div>
 
-    </div>
 
-<% } else { %>
+        <!-- ================= LEAVE A REVIEW ================= -->
 
-    <!-- ================= LOGIN MESSAGE ================= -->
+        <% if (currUser) { %>
 
-    <div class="row justify-content-center mt-5 mb-5">
+            <div class="row justify-content-center mt-5 mb-5">
 
-        <div class="col-lg-8">
+                <div class="col-lg-8">
 
-            <div class="review-card text-center">
+                    <div class="review-card">
 
-                <h3 class="review-heading">
-                    ⭐ Want to leave a review?
-                </h3>
+                        <h3 class="review-heading">
+                            ⭐ Leave a Review
+                        </h3>
 
-                <p class="text-muted">
-                    You need to login before you can give a review.
-                </p>
+                        <p class="text-muted">
+                            Reviewing as
+                            <strong>
+                                <%= currUser.username %>
+                            </strong>
+                        </p>
 
-                <a href="/login" class="btn submit-review-btn">
-                    Login to Review
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-<% } %>
-
-
-<!-- ================= REVIEWS ================= -->
-
-<div class="reviews-section mt-5 mb-5">
-
-    <hr class="my-5">
-
-    <h4 class="mb-4">
-        Guest Reviews
-    </h4>
-
-    <div class="row g-4 pb-5">
-
-        <% if (listing.reviews.length === 0) { %>
-
-            <!-- No Reviews -->
-
-            <div class="col-12">
-
-                <p class="text-muted">
-                    No reviews yet.
-                </p>
-
-            </div>
-
-        <% } else { %>
-
-            <!-- Display Reviews -->
-
-            <% for (let review of listing.reviews) { %>
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="card review-item-card h-100 border-0">
-
-                        <div class="card-body">
-
-                            <!-- Username -->
-
-                            <h5 class="mb-2">
-                                👤 <%= review.author.username %>
-                            </h5>
+                        <form action="/listings/<%= listing._id %>/reviews" method="post" class="needs-validation">
 
                             <!-- Rating -->
+                            <div class="mb-4">
 
-                            <h6 class="mb-3">
-                                ⭐ <%= review.rating %> / 5
-                            </h6>
+                                <label class="form-label">
+                                    Your Rating
+                                </label>
+                                <fieldset class="starability-basic">
+                                    <legend>First rating:</legend>
+                                    <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0"
+                                        checked aria-label="No rating." />
+                                    <input type="radio" id="first-rate1" name="rating" value="1" />
+                                    <label for="first-rate1" title="Terrible">1 star</label>
+                                    <input type="radio" id="first-rate2" name="rating" value="2" />
+                                    <label for="first-rate2" title="Not good">2 stars</label>
+                                    <input type="radio" id="first-rate3" name="rating" value="3" />
+                                    <label for="first-rate3" title="Average">3 stars</label>
+                                    <input type="radio" id="first-rate4" name="rating" value="4" />
+                                    <label for="first-rate4" title="Very good">4 stars</label>
+                                    <input type="radio" id="first-rate5" name="rating" value="5" />
+                                    <label for="first-rate5" title="Amazing">5 stars</label>
+                                </fieldset>
+
+
+                            </div>
+
 
                             <!-- Comment -->
+                            <div class="mb-4">
 
-                            <p class="card-text">
-                                <%= review.comment %>
+                                <label for="comment" class="form-label">
+                                    Write your experience
+                                </label>
+
+                                <textarea name="review[comment]" id="comment" rows="5" class="form-control"
+                                    placeholder="Share your experience about this place..." required></textarea>
+
+                            </div>
+
+
+                            <!-- Submit -->
+                            <button class="btn submit-review-btn">
+                                Submit Review ⭐
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <% } else { %>
+
+                <!-- ================= LOGIN MESSAGE ================= -->
+
+                <div class="row justify-content-center mt-5 mb-5">
+
+                    <div class="col-lg-8">
+
+                        <div class="review-card text-center">
+
+                            <h3 class="review-heading">
+                                ⭐ Want to leave a review?
+                            </h3>
+
+                            <p class="text-muted">
+                                You need to login before you can give a review.
                             </p>
 
-                            <!-- Date -->
-
-                            <small class="text-muted">
-
-                                <%= review.createdAt.toLocaleDateString("en-IN") %>
-
-                            </small>
+                            <a href="/login" class="btn submit-review-btn">
+                                Login to Review
+                            </a>
 
                         </div>
 
@@ -267,13 +193,81 @@
 
                 </div>
 
-            <% } %>
+                <% } %>
 
-        <% } %>
+
+                    <!-- ================= REVIEWS ================= -->
+
+                    <div class="reviews-section mt-5 mb-5">
+
+                        <hr class="my-5">
+
+                        <h4 class="mb-4">
+                            Guest Reviews
+                        </h4>
+
+                        <div class="row g-4 pb-5">
+
+                            <% if (listing.reviews.length===0) { %>
+
+                                <!-- No Reviews -->
+
+                                <div class="col-12">
+
+                                    <p class="text-muted">
+                                        No reviews yet.
+                                    </p>
+
+                                </div>
+
+                                <% } else { %>
+
+                                    <!-- Display Reviews -->
+
+                                    <% for (let review of listing.reviews) { %>
+
+                                        <div class="col-md-6 col-lg-4">
+
+                                            <div class="card review-item-card h-100 border-0">
+
+                                                <div class="card-body">
+
+                                                    <!-- Username -->
+                                                    <h5 class="mb-2">
+                                                        👤
+                                                        <%= review.author ? review.author.username : "Anonymous" %>
+                                                    </h5>
+
+                                                    <!-- Rating -->
+                                                    
+                                                    <p class="starability-result" data-rating="3">
+                                                       ⭐ <%= review.rating %>
+                                                    </p>
+                                                    <!-- Comment -->
+                                                    <p class="card-text">
+                                                        <%= review.comment %>
+                                                    </p>
+
+                                                    <!-- Date -->
+                                                    <small class="text-muted">
+
+                                                        <%= review.createdAt.toLocaleDateString("en-IN") %>
+
+                                                    </small>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <% } %>
+
+                                            <% } %>
+
+                        </div>
+
+                    </div>
+                    ```
 
     </div>
-
-</div>
-```
-
-</div>

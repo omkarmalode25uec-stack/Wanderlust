@@ -1,48 +1,78 @@
+
+<!-- ========================= -->
+<!-- MAIN NAVBAR -->
+<!-- ========================= -->
+
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
 
     <div class="container-fluid">
 
+        <!-- Logo -->
         <a class="navbar-brand" href="/">
             <i class="fa-regular fa-compass"></i>
         </a>
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup"
-        >
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNavAltMarkup">
+
             <span class="navbar-toggler-icon"></span>
+
         </button>
+
 
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 
+            <!-- Left Navigation -->
             <div class="navbar-nav">
 
-                <a class="nav-link" href="/">
-                    Home
+                <a class="nav-link" href="/listings">
+                    Explore
                 </a>
 
-                <a class="nav-link" href="/listings">
-                    All Listings
-                </a>
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- SEARCH BAR -->
+            <!-- ========================= -->
+
+            <form class="d-flex mx-auto search-form"
+                  action="/listings"
+                  method="GET">
+
+                <input
+                    class="form-control search-input"
+                    type="search"
+                    name="search"
+                    placeholder="Search destinations, properties..."
+                    aria-label="Search">
+
+                <button class="btn search-btn" type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+            </form>
+
+
+            <!-- Right Navigation -->
+            <div class="navbar-nav ms-auto">
 
                 <a class="nav-link" href="/listings/new">
                     ADD New Listings
                 </a>
 
-            </div>
-
-            <div class="navbar-nav ms-auto">
 
                 <% if (!currentUser) { %>
 
                     <a class="nav-link" href="/signup">
-                        Sign Up
+                        <b>Sign Up</b>
                     </a>
 
                     <a class="nav-link" href="/login">
-                        Login
+                        <b>Login</b>
                     </a>
 
                 <% } else { %>
@@ -60,3 +90,99 @@
     </div>
 
 </nav>
+
+
+
+<!-- ========================= -->
+<!-- CATEGORY FILTER BAR -->
+<!-- ========================= -->
+
+<div class="category-bar border-bottom">
+
+    <div class="category-container">
+
+
+        <a href="/listings?category=trending"
+           class="category-item">
+
+            <i class="fa-solid fa-fire"></i>
+            <span>Trending</span>
+
+        </a>
+
+
+        <a href="/listings?category=rooms"
+           class="category-item">
+
+            <i class="fa-solid fa-bed"></i>
+            <span>Rooms</span>
+
+        </a>
+
+
+        <a href="/listings?category=iconic-cities"
+           class="category-item">
+
+            <i class="fa-solid fa-city"></i>
+            <span>Iconic Cities</span>
+
+        </a>
+
+
+        <a href="/listings?category=mountains"
+           class="category-item">
+
+            <i class="fa-solid fa-mountain"></i>
+            <span>Mountains</span>
+
+        </a>
+
+
+        <a href="/listings?category=castles"
+           class="category-item">
+
+            <i class="fa-solid fa-chess-rook"></i>
+            <span>Castles</span>
+
+        </a>
+
+
+        <a href="/listings?category=pools"
+           class="category-item">
+
+            <i class="fa-solid fa-person-swimming"></i>
+            <span>Amazing Pools</span>
+
+        </a>
+
+
+        <a href="/listings?category=camping"
+           class="category-item">
+
+            <i class="fa-solid fa-tent"></i>
+            <span>Camping</span>
+
+        </a>
+
+
+        <a href="/listings?category=farms"
+           class="category-item">
+
+            <i class="fa-solid fa-wheat-awn"></i>
+            <span>Farms</span>
+
+        </a>
+
+
+        <a href="/listings?category=arctic"
+           class="category-item">
+
+            <i class="fa-solid fa-snowflake"></i>
+            <span>Arctic</span>
+
+        </a>
+
+    </div>
+
+</div>
+
