@@ -117,7 +117,7 @@ app.use((req, res, next) => {
 //  ROOT 
 
 app.get("/", (req, res) => {
-    res.send("hi i am root");
+    res.redirect("/listings");
 });
 
 // DEMO USER 
